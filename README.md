@@ -5,11 +5,16 @@ This is a team assignment
 Understand the Classes and Problem
 
 Change the program into a Model-View-Controller Design Pattern.
-Add a new part to the High-Card game by putting a timer on the side of the screen.  It will be on a timer to update every second, but in order for you to still play the game, you will need to use multithreading.  (Timer class)
+Add a new part to the High-Card game by putting a timer on the side of the screen.
+It will be on a timer to update every second, but in order for you to still play the game,
+you will need to use multithreading.  (Timer class)
 Design a new game.
 Redraw the UML diagram so that it represents your new structure.
+
 Phase 1: Model-View-Controller Design Pattern
+
 Phase 2: Multithreading Implimentation
+
 Display the timer box and numbers
 Create start and stop buttons to control the timer. (extra challenge: merge the two buttons into one start/stop button)
 Make a call to a doNothing() method that will use the sleep() method of the Thread class. 
@@ -22,6 +27,7 @@ If you cannot play, click a button that says "I cannot play".  The the computer 
 Who ever has the least number of "cannot plays", is the winner.  Declare this at the end, when the deck is exhausted.
 Last week we made a GUI card game.  Now it is time to modify it even further.  Redesign Phase 3 from the last module by adding a timer and put it into a design pattern.
 
+------------------------------------------------
 Here are the phases:
 
 You need to redesign last week's code into the Model-View-Controller Design Pattern.
