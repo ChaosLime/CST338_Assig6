@@ -18,7 +18,9 @@ Phase 2: Multithreading Implimentation
 Display the timer box and numbers
 Create start and stop buttons to control the timer. (extra challenge: merge the two buttons into one start/stop button)
 Make a call to a doNothing() method that will use the sleep() method of the Thread class. 
+
 Phase 3: Make a new Game!
+
 Take turns with the computer putting a card on one of two stacks in the middle of the table.  
 You can put on a card that is one value higher or one value lower.  (6 on a 5 OR 4 on a 5, Q on a J OR T on a J, etc.) 
 After you play, you get another card from the deck in your hand.
