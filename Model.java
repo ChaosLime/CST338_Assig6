@@ -19,6 +19,8 @@ import java.util.Random;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
+import Classes.String;
+
 public class Model
 {
    public static class Deck
@@ -642,7 +644,7 @@ public class Model
        * @param Card[] cards = cards to sort
        * @param int    arraySize = size of cards array
        */
-      public static int cardRankBySuit(Card card)
+      public int cardRankBySuit(Card card)
       {
          for (int i = 0; i < suitRanks.length; i++)
          {
@@ -667,7 +669,7 @@ public class Model
        * @param Card[] cards = cards to sort
        * @param int    arraySize = size of cards array
        */
-      public static int cardRankByValue(Card card)
+      public int cardRankByValue(Card card)
       {
          for (int i = 0; i < valueRanks.length; i++)
          {
@@ -711,8 +713,13 @@ public class Model
          int k;
 
          // filter bad values
-         if (numPacks < 1 || numPacks > 6)
+         if (numPacks < 1)
+         {
             numPacks = 1;
+         } else if (numPacks > 6)
+         {
+            numPacks = 6;
+         }
          if (numJokersPerPack < 0 || numJokersPerPack > 4)
             numJokersPerPack = 0;
          if (numUnusedCardsPerPack < 0 || numUnusedCardsPerPack > 50) // > 1
@@ -721,10 +728,12 @@ public class Model
          if (numPlayers < 1 || numPlayers > MAX_PLAYERS)
             numPlayers = 4;
          // one of many ways to assure at least one full deal to all players
-         if (numCardsPerHand < 1 || numCardsPerHand > numPacks
-                        * (52 - numUnusedCardsPerPack) / numPlayers)
+         if (numCardsPerHand < 1 || numCardsPerHand > (numPacks
+                        * (52 - numUnusedCardsPerPack) / numPlayers))
+         {
             numCardsPerHand = numPacks * (52 - numUnusedCardsPerPack)
                            / numPlayers;
+         }
 
          // allocate
          this.unusedCardsPerPack = new Card[numUnusedCardsPerPack];
@@ -858,7 +867,40 @@ public class Model
 
          return hand[playerIndex].takeCard(deck.dealCard());
       }
-
    }
 
+   public class CardTableModel
+   {
+      public static final int MAX_CARDS_PER_HAND = 56;
+      public static final int MAX_PLAYERS = 2; // for now, we only allow 2
+                                               // person games
+
+      private int numCardsPerHand;
+      private int numPlayers;
+
+      /*
+       * The constructor filters and sets input
+       */
+      public CardTableModel(String title, int numCardsPerHand, int numPlayers)
+      {
+         super(title);
+
+         if (numCardsPerHand <= MAX_CARDS_PER_HAND)
+            this.numCardsPerHand = numCardsPerHand;
+
+         if (numPlayers <= MAX_PLAYERS)
+            this.numPlayers = numPlayers;
+      }
+
+      // Accessors for the two instance members
+      public int getNumCardsPerHand()
+      {
+         return this.numCardsPerHand;
+      }
+
+      public int getNumPlayers()
+      {
+         return this.numPlayers;
+      }
+   }
 }
