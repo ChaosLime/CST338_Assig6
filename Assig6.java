@@ -30,7 +30,7 @@ public class Assig6
    public static void main(String[] args)
    {
       Control.setUpGame();
-      //The computer and player hands will be built up from highCardGame hands
+      //The computer and player hands will be built up from BUILD hands
       Control.buildHands();
       //Gathers information on players and sets up labels for View
       Control.setUpPlayerLabels();
@@ -48,7 +48,7 @@ public class Assig6
 class Control
 {
    
-   private static Model.CardGameFramework highCardGame;
+   private static Model.CardGameFramework BUILD;
    private static final int NUM_CARDS_PER_HAND = 7;
    public static final int NUM_PLAYERS = 2;
    private static JLabel[] computerLabels = new JLabel[NUM_CARDS_PER_HAND];
@@ -95,9 +95,9 @@ class Control
       View.myCardTable.pnlHumanHand.removeAll();
       Icon tempIcon;
       // Create labels and add them to myCardTable for computer-----------------
-      for (int k = 0; k < highCardGame.getHand(0).getNumCards(); k++)
+      for (int k = 0; k < BUILD.getHand(0).getNumCards(); k++)
       {
-         if (k < highCardGame.getHand(0).getNumCards())
+         if (k < BUILD.getHand(0).getNumCards())
          {
             computerLabels[k] = new JLabel(Model.GUICard.getBackCardIcon());
          }
@@ -105,11 +105,11 @@ class Control
       }
       
       // Create labels and add them to myCardTable for human-----------------
-      for (int k = 0; k < highCardGame.getHand(1).getNumCards(); k++)
+      for (int k = 0; k < BUILD.getHand(1).getNumCards(); k++)
       {
-         if (k < highCardGame.getHand(1).getNumCards())
+         if (k < BUILD.getHand(1).getNumCards())
          {
-            tempIcon = Model.GUICard.getIcon(highCardGame.getHand(1)
+            tempIcon = Model.GUICard.getIcon(BUILD.getHand(1)
                                                    .inspectCard(k));
             humanLabels[k] = new JButton(tempIcon);
             View.myCardTable.pnlHumanHand.add(new Control.CardButton(humanLabels[k]
@@ -133,11 +133,11 @@ class Control
        * display
        */
       
-      highCardGame = new Model.CardGameFramework(numPacksPerDeck,
+      BUILD = new Model.CardGameFramework(numPacksPerDeck,
               numJokersPerPack, numUnusedCardsPerPack, unusedCardsPerPack,
               NUM_PLAYERS, NUM_CARDS_PER_HAND);
             
-      highCardGame.deal();
+      BUILD.deal();
       
       View.drawNewCardTable(NUM_CARDS_PER_HAND,NUM_PLAYERS);
       
@@ -170,7 +170,7 @@ class Control
        * computer based off of the value of the card in the hand. The computer
        * will always choose the highest value of card in the hand.
        */
-      Model.Hand computerHand = highCardGame.getHand(0);
+      Model.Hand computerHand = BUILD.getHand(0);
       Model.Card tempCard;
       int highestValueIndex = -1;
       int tempCardValue = -1; 
@@ -195,7 +195,7 @@ class Control
        * return the index of the equivalent card (card with same suit and value)
        * that resides in the hand of that entity.
        */
-      Model.Hand tempHand = highCardGame.getHand(playerIndex);
+      Model.Hand tempHand = BUILD.getHand(playerIndex);
       Model.Card tempCard;
       for (int i = 0; i < tempHand.getNumCards(); i++)
       {
@@ -219,11 +219,11 @@ class Control
       //find the index of the card in the hand, then remove it via playCard()
       Model.Card tempCard = Model.getCardFromPlayer(0);
       int cardInHandIndex = getIndexOfCardInHand(0, tempCard);
-      highCardGame.getHand(0).playCard(cardInHandIndex);
+      BUILD.getHand(0).playCard(cardInHandIndex);
       
       tempCard = Model.getCardFromPlayer(1);
       cardInHandIndex = getIndexOfCardInHand(1, tempCard);
-      highCardGame.getHand(1).playCard(cardInHandIndex);
+      BUILD.getHand(1).playCard(cardInHandIndex);
       
       buildHands();
       
