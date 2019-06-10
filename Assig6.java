@@ -313,7 +313,11 @@ class Control
           * time immediately.
           */
          this(); //call default constructor
-         counterThread.start();
+         if(startTimerNow)
+         {
+            counterThread.start();
+         }
+         
       }
       
       public JButton getButtonToStartTimer()
@@ -613,7 +617,7 @@ class View
          /*
           * Added the timer in here with its start/stop button
           */
-         Timer autoTimer = new Timer(true);
+         Control.Timer autoTimer = new Control.Timer(true);
          JButton timerStartButton = autoTimer.getButtonToStartTimer();
          timerStartButton.setText("Start/Stop Timer"); 
          
