@@ -1,3 +1,4 @@
+
 /** Team 1
 
  * @Austin Ah Loo
@@ -13,7 +14,6 @@ import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import java.util.Random;
 
 import javax.swing.Icon;
@@ -25,53 +25,70 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.TitledBorder;
 
-
-
 public class Assig6
 {
    public static void main(String[] args)
    {
       Control.setUpGame();
-      //The computer and player hands will be built up from BUILD hands
+      // The computer and player hands will be built up from BUILD hands
       Control.buildHands();
-      //Gathers information on players and sets up labels for View
+      // Gathers information on players and sets up labels for View
       Control.setUpPlayerLabels();
-      //Call helper method to put the playLabelText onto the myCardTable
+      // Call helper method to put the playLabelText onto the myCardTable
       Control.resetPlayArea();
-      //show everything to the user and go to View to update
+      // show everything to the user and go to View to update
       Control.updateView();
+
+      /* declare and implement Timer object and control here */
+      Timer timer = new Timer();
+      // ....
+
+      /*
+       * Build game with each component of MVC that incorporates all of the
+       * required elements and is facilitated by the Control object
+       * (Controller)
+       */
+      // Model modelBuild = new Model(BUILD, "Computer", "You");
+
+      // View viewBuild = new View(); // needs to incorporate Timer object once
+      // it's created
+
+      // Control controlBuild = new Control(modelBuild, viewBuild);
    }
+
 }
+
 /**
  * Control has access to the class Assig6, Model, and View.
+ * 
  * @author nick
  *
  */
 class Control
 {
-   
+
    private static Model.CardGameFramework BUILD;
    private static final int NUM_CARDS_PER_HAND = 7;
    public static final int NUM_PLAYERS = 2;
    private static JLabel[] computerLabels = new JLabel[NUM_CARDS_PER_HAND];
    private static JButton[] humanLabels = new JButton[NUM_CARDS_PER_HAND];
-   public static JLabel[] playedCardLabels  = new JLabel[Control.NUM_PLAYERS];
-   public static JLabel[] playLabelText  = new JLabel[Control.NUM_PLAYERS];
-   
-   
+   public static JLabel[] playedCardLabels = new JLabel[Control.NUM_PLAYERS];
+   public static JLabel[] playLabelText = new JLabel[Control.NUM_PLAYERS];
+
    // static for the card icons and their corresponding labels
    public static final char[] CARD_NUMBERS = new char[]
-   {'A', '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K', 'X'};
+   { '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K', 'A', 'X' };
    public static final char[] SUITS = new char[]
-   {'C', 'D', 'H', 'S'};
-   public static final int NUM_CARD_IMAGES = (CARD_NUMBERS.length *
-         SUITS.length) + 1;
+   { 'C', 'D', 'H', 'S' };
+   public static final int NUM_CARD_IMAGES = (CARD_NUMBERS.length
+                  * SUITS.length) + 1;
    // + 1 for back card
    public static Icon[] icon = new ImageIcon[NUM_CARD_IMAGES];
-   //Connecting and related control based Functions
+
+   // Connecting and related control based Functions
    public static void updateView()
    {
-      View.updateView();      
+      View.updateView();
    }
 
    public static void resetPlayArea()
@@ -83,40 +100,43 @@ class Control
    {
       View.setUpPlayerLabels();
    }
-   
+
    public static void buildHands()
    {
       /**
-       * Generate the JLabels (for computer) and JButtons (for player)
-       * based off of the hands stored in highGameCard and add them to 
-       * myCardTable to be visible.
+       * Generate the JLabels (for computer) and JButtons (for player) based
+       * off of the hands stored in highGameCard and add them to myCardTable to
+       * be visible.
        */
       View.myCardTable.pnlComputerHand.removeAll();
       View.myCardTable.pnlHumanHand.removeAll();
       Icon tempIcon;
-      // Create labels and add them to myCardTable for computer-----------------
-      for (int k = 0; k < BUILD.getHand(0).getNumCards(); k++)
+      int computerHand = 0;
+      int playerHand = 1;
+      // Create labels and add them to myCardTable for
+      // computer-----------------
+      for (int k = 0; k < BUILD.getHand(computerHand).getNumCards(); k++)
       {
-         if (k < BUILD.getHand(0).getNumCards())
+         if (k < BUILD.getHand(computerHand).getNumCards())
          {
             computerLabels[k] = new JLabel(Model.GUICard.getBackCardIcon());
          }
          View.myCardTable.pnlComputerHand.add(computerLabels[k]);
       }
-      
+
       // Create labels and add them to myCardTable for human-----------------
-      for (int k = 0; k < BUILD.getHand(1).getNumCards(); k++)
+      for (int k = 0; k < BUILD.getHand(playerHand).getNumCards(); k++)
       {
-         if (k < BUILD.getHand(1).getNumCards())
+         if (k < BUILD.getHand(playerHand).getNumCards())
          {
-            tempIcon = Model.GUICard.getIcon(BUILD.getHand(1)
-                                                   .inspectCard(k));
+            tempIcon = Model.GUICard
+                           .getIcon(BUILD.getHand(playerHand).inspectCard(k));
             humanLabels[k] = new JButton(tempIcon);
-            View.myCardTable.pnlHumanHand.add(new Control.CardButton(humanLabels[k]
-                                                               .getIcon()));
-         }           
+            View.myCardTable.pnlHumanHand.add(
+                           new Control.CardButton(humanLabels[k].getIcon()));
+         }
       }
-      View.myCardTable.setVisible(true); 
+      View.myCardTable.setVisible(true);
    }
 
    public static void setUpGame()
@@ -132,37 +152,35 @@ class Control
        * CardFramework object to leverage the dealing of cards to the GUI
        * display
        */
-      
-      BUILD = new Model.CardGameFramework(numPacksPerDeck,
-              numJokersPerPack, numUnusedCardsPerPack, unusedCardsPerPack,
-              NUM_PLAYERS, NUM_CARDS_PER_HAND);
-            
+
+      BUILD = new Model.CardGameFramework(numPacksPerDeck, numJokersPerPack,
+                     numUnusedCardsPerPack, unusedCardsPerPack, NUM_PLAYERS,
+                     NUM_CARDS_PER_HAND);
+
       BUILD.deal();
-      
-      View.drawNewCardTable(NUM_CARDS_PER_HAND,NUM_PLAYERS);
-      
-      
-      
+
+      View.drawNewCardTable(NUM_CARDS_PER_HAND, NUM_PLAYERS);
+
    }
 
    public static void addCardsToTable()
    {
       /**
-       * For both computer and player, add the chosen cards (stored in 
+       * For both computer and player, add the chosen cards (stored in
        * playedCardLabels) to the myCardTable middle JPanel
        */
-      //if there are no panels currently on the frame, then add some
+      // if there are no panels currently on the frame, then add some
       if (View.myCardTable.pnlPlayArea.getComponents().length <= NUM_PLAYERS)
       {
          // adding cards to the play area panel
-         for(int k = 0; k < NUM_PLAYERS; k++ )
+         for (int k = 0; k < NUM_PLAYERS; k++)
          {
             View.myCardTable.pnlPlayArea.add(playedCardLabels[k]);
             View.myCardTable.repaint();
          }
       }
    }
-   
+
    public static void selectComputerCard()
    {
       /**
@@ -173,27 +191,27 @@ class Control
       Model.Hand computerHand = BUILD.getHand(0);
       Model.Card tempCard;
       int highestValueIndex = -1;
-      int tempCardValue = -1; 
+      int tempCardValue = -1;
       for (int i = 0; i < computerHand.getNumCards(); i++)
       {
          tempCard = computerHand.inspectCard(i);
-         
+
          if (Model.Card.valueAsInt(tempCard) > tempCardValue)
          {
             tempCardValue = Model.Card.valueAsInt(tempCard);
             highestValueIndex = i;
          }
       }
-      playedCardLabels[0] = new JLabel(Model.GUICard.getIcon(computerHand.
-                                             inspectCard(highestValueIndex)));
+      playedCardLabels[0] = new JLabel(Model.GUICard
+                     .getIcon(computerHand.inspectCard(highestValueIndex)));
    }
-   
+
    private static int getIndexOfCardInHand(int playerIndex, Model.Card card)
    {
       /**
        * When provided with both the player index and a card object, this will
-       * return the index of the equivalent card (card with same suit and value)
-       * that resides in the hand of that entity.
+       * return the index of the equivalent card (card with same suit and
+       * value) that resides in the hand of that entity.
        */
       Model.Hand tempHand = BUILD.getHand(playerIndex);
       Model.Card tempCard;
@@ -207,94 +225,94 @@ class Control
       }
       return -1;
    }
-   
+
    public static void removePlayedCardsFromHands()
    {
       /**
        * This method will gather the most recently played card from previously
-       * defined methods and will play card using Hand.playCard() method.
-       * Then will call buildHands() which will reconstruct the JLabels
-       * and JButtons in the myCardTable JPanels.
+       * defined methods and will play card using Hand.playCard() method. Then
+       * will call buildHands() which will reconstruct the JLabels and JButtons
+       * in the myCardTable JPanels.
        */
-      //find the index of the card in the hand, then remove it via playCard()
+      // find the index of the card in the hand, then remove it via playCard()
       Model.Card tempCard = Model.getCardFromPlayer(0);
       int cardInHandIndex = getIndexOfCardInHand(0, tempCard);
       BUILD.getHand(0).playCard(cardInHandIndex);
-      
+
       tempCard = Model.getCardFromPlayer(1);
       cardInHandIndex = getIndexOfCardInHand(1, tempCard);
       BUILD.getHand(1).playCard(cardInHandIndex);
-      
+
       buildHands();
-      
+
       View.updateView();
-      
+
    }
-   
+
    public static void roundEndDisplay()
    {
       /**
-       * When the round has ended (signaled by the selection of cards by
-       * all players), generate a win/lose/tie message and paste it along side
-       * a JButton that allows the player to advance to the next round.
-       * This method also comes with an anonymous action listener attached
-       * to the JButton. When the JButton is pressed, the message JPanel
-       * is cleared out, play area is reset and hands are rebuilt.
+       * When the round has ended (signaled by the selection of cards by all
+       * players), generate a win/lose/tie message and paste it along side a
+       * JButton that allows the player to advance to the next round. This
+       * method also comes with an anonymous action listener attached to the
+       * JButton. When the JButton is pressed, the message JPanel is cleared
+       * out, play area is reset and hands are rebuilt.
        */
-      //determine winner via determineRoundWinner()
+      // determine winner via determineRoundWinner()
       JLabel roundEndLabel = new JLabel(Control.getWinMessage());
       JButton nextRoundBtn = new JButton("Click for next round");
       nextRoundBtn.addActionListener(new ActionListener()
+      {
+         @Override
+         public void actionPerformed(ActionEvent arg0)
          {
-            @Override
-            public void actionPerformed(ActionEvent arg0)
-            {
-               View.myCardTable.pnlMsgArea.removeAll();
-               View.myCardTable.repaint();
-               //reset play area for next round
-               resetPlayArea();
-               buildHands();
-               //now that the reset button has been pressed, card buttons can
-               //be pressed again
-               Model.readyToPlayCard = true;
-            }
-         });
+            View.myCardTable.pnlMsgArea.removeAll();
+            View.myCardTable.repaint();
+            // reset play area for next round
+            resetPlayArea();
+            buildHands();
+            // now that the reset button has been pressed, card buttons can
+            // be pressed again
+            Model.readyToPlayCard = true;
+         }
+      });
       View.myCardTable.pnlMsgArea.add(roundEndLabel);
       View.myCardTable.pnlMsgArea.add(nextRoundBtn);
    }
-  
+
    private static String getWinMessage()
    {
       return Model.getWinMessage();
    }
-   
-   /* The section below contains Classes that 
-    * implements Action Listeners 
-    * and connects them to the appropriate Logic 
-    * in Model and the Buttons/Labels in View.
+
+   /*
+    * The section below contains Classes that implements Action Listeners and
+    * connects them to the appropriate Logic in Model and the Buttons/Labels in
+    * View.
     */
-   
-   /** 
+
+   /**
     * @Mitchell
     */
    @SuppressWarnings("serial")
    public static class Timer extends JLabel implements ActionListener
    {
       /**
-       * Timer class is intended to be used as a JLabel. Once it has been called
-       * the caller can create a button from a public method that will be able
-       * to stop and start the timer. Otherwise the timer can be started by
-       * passing true to it in a constructor. Timer will not be able to display
-       * any time past 99 minutes and 59 seconds.
+       * Timer class is intended to be used as a JLabel. Once it has been
+       * called the caller can create a button from a public method that will
+       * be able to stop and start the timer. Otherwise the timer can be
+       * started by passing true to it in a constructor. Timer will not be able
+       * to display any time past 99 minutes and 59 seconds.
        */
       String timerText;
       long startTime;
       JButton timerButton = new JButton();
       Counter counterThread = new Counter();
-      
-      //this will represent control in the MVC
-      //this needs to be removed before implementing
-            
+
+      // this will represent control in the MVC
+      // this needs to be removed before implementing
+
       public Timer()
       {
          /**
@@ -305,30 +323,30 @@ class Control
          this.setHorizontalAlignment(SwingConstants.CENTER);
          setText("00:00");
       }
-      
+
       public Timer(boolean startTimerNow)
       {
          /**
-          * Another constructor that allows the caller to create and start the 
+          * Another constructor that allows the caller to create and start the
           * time immediately.
           */
-         this(); //call default constructor
-         if(startTimerNow)
+         this(); // call default constructor
+         if (startTimerNow)
          {
             counterThread.start();
          }
-         
+
       }
-      
+
       public JButton getButtonToStartTimer()
       {
          /**
-          * Returns a JButton that is associated with the action listener and will
-          * start and stop the timer.
+          * Returns a JButton that is associated with the action listener and
+          * will start and stop the timer.
           */
          return timerButton;
       }
-      
+
       public boolean resetTimer()
       {
          /**
@@ -337,88 +355,89 @@ class Control
          this.counterThread.setSeconds(0);
          return true;
       }
-      
+
       @Override
-      public void actionPerformed(ActionEvent e) 
+      public void actionPerformed(ActionEvent e)
       {
          /**
-          * Action listener for the instance JButton that will start and stop the 
-          * timer. If the thread is alive, then stop the existing thread and 
-          * create a new thread with the same time value, but stopped.
-          * If the thread is not alive, then start the thread.
+          * Action listener for the instance JButton that will start and stop
+          * the timer. If the thread is alive, then stop the existing thread
+          * and create a new thread with the same time value, but stopped. If
+          * the thread is not alive, then start the thread.
           */
          if (counterThread.isAlive())
          {
             counterThread.stopThread();
             counterThread = new Counter(counterThread.getSecondsPassed());
-         }
-         else
+         } else
          {
             counterThread.start();
          }
       }
-      
+
       public class Counter extends Thread
       {
          /**
-          * Counter class is the mutlti-threaded portion of the timer and is what
-          * is responsible for making the Timer class not lock up the gui.
+          * Counter class is the mutlti-threaded portion of the timer and is
+          * what is responsible for making the Timer class not lock up the gui.
           */
          private int seconds = 0;
          private boolean threadRunning = true;
-         
+
          public Counter()
          {
             /**
-             * Default constructor that calls the constructor of the Thread class
+             * Default constructor that calls the constructor of the Thread
+             * class
              */
             super();
          }
-         
+
          public Counter(int timeStartValue)
          {
             /**
-             * Another constructor that allows the caller to initialize the thread
-             * with a start time. This is what gives the illusion of a paused
-             * timer.
+             * Another constructor that allows the caller to initialize the
+             * thread with a start time. This is what gives the illusion of a
+             * paused timer.
              */
-            //Subtract 1 from the timeStartValue to prevent the timer incrementing
-            //from every pause/start.
+            // Subtract 1 from the timeStartValue to prevent the timer
+            // incrementing
+            // from every pause/start.
             this.seconds = timeStartValue - 1;
          }
-         
+
          public void run()
          {
             /**
-             * Called when the instance's method start() is called (inherited from
-             * Thread class). This is where the updating of the timer takes place.
+             * Called when the instance's method start() is called (inherited
+             * from Thread class). This is where the updating of the timer
+             * takes place.
              */
             while (threadRunning)
             {
                /*
-                * As long as the timer is less than 99 minutes and 59 seconds then
-                * increment just one per second. In the event that the timer runs
-                * longer than that, start timer over at 0 seconds.
+                * As long as the timer is less than 99 minutes and 59 seconds
+                * then increment just one per second. In the event that the
+                * timer runs longer than that, start timer over at 0 seconds.
                 */
                if (this.seconds < 6000)
                {
                   this.seconds += 1;
-               }
-               else
+               } else
                {
                   this.seconds = 0;
                }
-               //referring to the JLabel setText method for Timer
+               // referring to the JLabel setText method for Timer
                setText(getFormattedTime(seconds));
-               doNothing((long)1000);   
+               doNothing((long) 1000);
             }
          }
-         
+
          public boolean setSeconds(int seconds)
          {
             /**
-             * Allow caller to set seconds of the timer. Added to allow Timer class
-             * to reset timer to zero.
+             * Allow caller to set seconds of the timer. Added to allow Timer
+             * class to reset timer to zero.
              */
             this.seconds = seconds;
             return true;
@@ -432,7 +451,7 @@ class Control
             this.threadRunning = false;
             return true;
          }
-         
+
          public int getSecondsPassed()
          {
             /**
@@ -440,18 +459,19 @@ class Control
              */
             return this.seconds;
          }
-         
+
          private String getFormattedTime(int totalElapsedSeconds)
          {
             /**
-             * Format and return a String that can be used to set the Timer's 
-             * JLabel text. The format of the timer is "MM:ss" where "M" represents
-             * the minutes and "s" represents the seconds passed since timer start.
+             * Format and return a String that can be used to set the Timer's
+             * JLabel text. The format of the timer is "MM:ss" where "M"
+             * represents the minutes and "s" represents the seconds passed
+             * since timer start.
              */
             int minutes = totalElapsedSeconds / 60;
             int seconds = totalElapsedSeconds - (minutes * 60);
-            String timerText = String.format("%02d", minutes)
-                                          + ":" + String.format("%02d", seconds);
+            String timerText = String.format("%02d", minutes) + ":"
+                           + String.format("%02d", seconds);
             return timerText;
          }
 
@@ -464,8 +484,7 @@ class Control
             try
             {
                Thread.sleep(milliseconds);
-            }
-            catch (InterruptedException e)
+            } catch (InterruptedException e)
             {
                System.out.println("Unexpeced interrupt");
                System.exit(0);
@@ -473,7 +492,7 @@ class Control
          }
       }
    }
-   
+
    @SuppressWarnings("serial")
    public static class CardButton extends JButton implements ActionListener
    {
@@ -482,28 +501,30 @@ class Control
          super(icon);
          addActionListener(this);
       }
+
       @Override
       public void actionPerformed(ActionEvent e)
       {
          if (Model.readyToPlayCard == true)
          {
-            //create JLabel from the JButton clicked and add to playedCardLabels
-            JButton source = (JButton)e.getSource();
+            // create JLabel from the JButton clicked and add to
+            // playedCardLabels
+            JButton source = (JButton) e.getSource();
             playedCardLabels[1] = new JLabel(source.getIcon());
-            //Choose computer card based off of computer hand
+            // Choose computer card based off of computer hand
             selectComputerCard();
-            //add all selections to main play area
+            // add all selections to main play area
             addCardsToTable();
-            //display winner message and button to advance
+            // display winner message and button to advance
             roundEndDisplay();
-            //add both cards to winnings if user won
+            // add both cards to winnings if user won
             Model.buttonLogic();
-            //remove chosen cards out of computer an player's hands
+            // remove chosen cards out of computer an player's hands
             removePlayedCardsFromHands();
-            
+
             updateView();
-            //now that a card has just been played, change the flag so that
-            //subsequent button presses do nothing
+            // now that a card has just been played, change the flag so that
+            // subsequent button presses do nothing
             Model.readyToPlayCard = false;
          }
       }
@@ -512,181 +533,187 @@ class Control
 
 /**
  * The class View only has access to the Control class
+ * 
  * @author nick
  *
  */
 
 class View
-{   
+{
    public static CardTable myCardTable;
-      
+
    public static void resetPlayArea()
    {
       /**
-       * This is responsible for clearing and preparing the play area of 
-       * myCardTable for the next round of cards. This will clear and then 
-       * re-write JLabels back into the main play area. 
+       * This is responsible for clearing and preparing the play area of
+       * myCardTable for the next round of cards. This will clear and then
+       * re-write JLabels back into the main play area.
        */
       myCardTable.pnlPlayArea.removeAll();
       // adding labels to the PA panel under the cards
       myCardTable.pnlPlayArea.add(Control.playLabelText[0]);
       myCardTable.pnlPlayArea.add(Control.playLabelText[1]);
    }
-   
+
    public static void updateView()
    {
       myCardTable.repaint();
       myCardTable.setVisible(true);
    }
-   
+
    public static void setUpPlayerLabels()
    {
       int k = 0;
-    //Create labels for computer and player
+      // Create labels for computer and player
       for (k = 0; k < Control.NUM_PLAYERS; k++)
       {
-         if(k == 0)
+         if (k == 0)
             Control.playLabelText[k] = new JLabel("Computer", JLabel.CENTER);
-         
-         if(k == 1)
-            Control.playLabelText[k] = new JLabel("You", JLabel.CENTER);    
-       }
+
+         if (k == 1)
+            Control.playLabelText[k] = new JLabel("You", JLabel.CENTER);
+      }
    }
-   
+
    public static void drawNewCardTable(int NUM_CARDS_PER_HAND, int NUM_PLAYERS)
    {
-       myCardTable = new View.CardTable("CardTable",NUM_CARDS_PER_HAND,NUM_PLAYERS);
-       myCardTable.setSize(800, 800);
-       myCardTable.setLocationRelativeTo(null);
-       myCardTable.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
-       myCardTable.setVisible(true);
-      
+      myCardTable = new View.CardTable("CardTable", NUM_CARDS_PER_HAND,
+                     NUM_PLAYERS);
+      myCardTable.setSize(800, 800);
+      myCardTable.setLocationRelativeTo(null);
+      myCardTable.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+      myCardTable.setVisible(true);
+
    }
-      
+
    @SuppressWarnings("serial")
    public static class CardTable extends JFrame
    {
       /*
-       * the following five members are needed is to establish the grid layout 
-       * for the JPanels, the organization of which depends on how many cards and
-       * players will be displayed.
+       * the following five members are needed is to establish the grid layout
+       * for the JPanels, the organization of which depends on how many cards
+       * and players will be displayed.
        */
       public static final int MAX_CARDS_PER_HAND = 56;
-      public static final int MAX_PLAYERS = 2;  //for now, we only allow 2 person games
-         
+      public static final int MAX_PLAYERS = 2; // for now, we only allow 2
+                                               // person games
+
       private int numCardsPerHand;
       private int numPlayers;
-      
+
       public JPanel pnlComputerHand, pnlHumanHand, pnlPlayArea, pnlMsgArea,
-                     pnlCenterArea,pnlTimerArea;
+                     pnlCenterArea, pnlTimerArea;
 
       /*
-       * The constructor filters input, adds any panels to the JFrame, and 
+       * The constructor filters input, adds any panels to the JFrame, and
        * establishes layouts
        */
-      public CardTable( String title, int numCardsPerHand, int numPlayers )
+      public CardTable(String title, int numCardsPerHand, int numPlayers)
       {
          super(title);
-         
-         if( numCardsPerHand <= MAX_CARDS_PER_HAND )
+
+         if (numCardsPerHand <= MAX_CARDS_PER_HAND)
+         {
             this.numCardsPerHand = numCardsPerHand;
-         
-         if( numPlayers <= MAX_PLAYERS )
+         }
+
+         if (numPlayers <= MAX_PLAYERS)
+         {
             this.numPlayers = numPlayers;
-         
+         }
+
          frameInit();
-         
-         this.setLayout( new GridLayout(3, 1) );
-         
+
+         this.setLayout(new GridLayout(3, 1));
+
          /*
-          * three Public JPanels, one for each hand (player-bottom and 
-          * computer-top) and a middle "playing" JPanel. 
+          * three Public JPanels, one for each hand (player-bottom and
+          * computer-top) and a middle "playing" JPanel.
           */
-         pnlComputerHand = new JPanel( new GridLayout(1, numCardsPerHand) );
-         pnlHumanHand = new JPanel( new GridLayout(1, numCardsPerHand) );
-         
-         pnlCenterArea = new JPanel( new GridLayout(2, 1) );
-         pnlPlayArea = new JPanel( new GridLayout(2, 2) );
+         pnlComputerHand = new JPanel(new GridLayout(1, numCardsPerHand));
+         pnlHumanHand = new JPanel(new GridLayout(1, numCardsPerHand));
+
+         pnlCenterArea = new JPanel(new GridLayout(2, 1));
+         pnlPlayArea = new JPanel(new GridLayout(2, 2));
          pnlMsgArea = new JPanel();
          pnlTimerArea = new JPanel();
-         
-         setLayout( new BorderLayout(10, 10));
-         
-         this.add( pnlComputerHand, BorderLayout.NORTH );
-         this.add( pnlTimerArea, BorderLayout.EAST);
+
+         setLayout(new BorderLayout(10, 10));
+
+         this.add(pnlComputerHand, BorderLayout.NORTH);
+         this.add(pnlTimerArea, BorderLayout.EAST);
          /*
           * Added the timer in here with its start/stop button
           */
          Control.Timer autoTimer = new Control.Timer(true);
          JButton timerStartButton = autoTimer.getButtonToStartTimer();
-         timerStartButton.setText("Start/Stop Timer"); 
-         
+         timerStartButton.setText("Start/Stop Timer");
+
          pnlTimerArea.add(timerStartButton);
          pnlTimerArea.add(autoTimer);
-         
+
          pnlCenterArea.add(pnlPlayArea);
          pnlCenterArea.add(pnlMsgArea);
-         this.add( pnlCenterArea, BorderLayout.CENTER );
-         this.add( pnlHumanHand, BorderLayout.SOUTH );
-         
-         pnlComputerHand.setBorder( new TitledBorder("Computer Hand") );
+         this.add(pnlCenterArea, BorderLayout.CENTER);
+         this.add(pnlHumanHand, BorderLayout.SOUTH);
+
+         pnlComputerHand.setBorder(new TitledBorder("Computer Hand"));
          pnlTimerArea.setBorder(new TitledBorder("Timer"));
-         pnlPlayArea.setBorder( new TitledBorder("Playing Area") );
-         pnlHumanHand.setBorder( new TitledBorder("Your Hand") );
-      } 
+         pnlPlayArea.setBorder(new TitledBorder("Playing Area"));
+         pnlHumanHand.setBorder(new TitledBorder("Your Hand"));
+      }
 
       // Accessors for the two instance members
       public int getNumCardsPerHand()
       {
          return this.numCardsPerHand;
       }
-      
+
       public int getNumPlayers()
       {
          return this.numPlayers;
       }
-    }
-   
+   }
+
 }
 
 /**
  * The Model class only has access to the Control class
+ * 
  * @author nick
  *
  */
 class Model
-{   
-   public static Card[] winnings = new Card[1 * 52]; 
-   //change 1 for # of decks
+{
+   public static Card[] winnings = new Card[1 * 52];
+   // change 1 for # of decks
    public static int numTimesWon = 0;
    public static boolean readyToPlayCard = true;
-   
+
    public static int didHumanWin()
    {
       /**
-       * Determine if human or computer won the game. Return -1 if computer,
-       * 0 if tie, and 1 if player.
+       * Determine if human or computer won the game. Return -1 if computer, 0
+       * if tie, and 1 if player.
        */
       Card computerCard = getCardFromPlayer(0);
       Card humanCard = getCardFromPlayer(1);
-      
+
       int valueOfComputerCard = Card.valueAsInt(computerCard);
       int valueOfHumanCard = Card.valueAsInt(humanCard);
-      
+
       if (valueOfHumanCard == valueOfComputerCard)
       {
          return 0;
-      }
-      else if (valueOfHumanCard > valueOfComputerCard)
+      } else if (valueOfHumanCard > valueOfComputerCard)
       {
          return 1;
-      }
-      else
+      } else
       {
          return -1;
       }
    }
-   
+
    public static void buttonLogic()
    {
       if (didHumanWin() == 1)
@@ -695,7 +722,7 @@ class Model
          winnings[numTimesWon + 1] = getCardFromPlayer(1);
          numTimesWon += 2;
       }
-      
+
    }
 
    public static String getWinMessage()
@@ -705,58 +732,68 @@ class Model
        * Appropriate message to be displayed in a JLabel later.
        */
       int winStatus = didHumanWin();
-      
+
       switch (winStatus)
       {
-         case -1: return "Computer Wins!";
-         case 0: return "Tie!";
-         case 1: return "You Win!";
-         default: return "NO WINNER - ERROR";
+      case -1:
+         return "Computer Wins!";
+      case 0:
+         return "Tie!";
+      case 1:
+         return "You Win!";
+      default:
+         return "NO WINNER - ERROR";
       }
    }
-   
+
    public static Card getCardFromPlayer(int playerIndex)
    {
       /**
        * When provided a player number (0 for computer, 1 or more for player)
-       * this will return the card that the entity had most recently chosen
-       * to play.
+       * this will return the card that the entity had most recently chosen to
+       * play.
        */
-      String cardString = Control.playedCardLabels[playerIndex].getIcon().toString();
+      String cardString = Control.playedCardLabels[playerIndex].getIcon()
+                     .toString();
       cardString = cardString.substring(cardString.indexOf('/') + 1);
       Card tempCard = getCardFromFilename(cardString);
       return tempCard;
    }
-   
+
    private static Card getCardFromFilename(String filename)
    {
       /**
        * When provided the filename of an icon for a card image, this function
-       * will return a card instance that has the same suit and value.
-       * Note: The filename be in a standard format and must not have a folder
-       * listed before it. The first two characters must be like "A8", where
-       * "A" is the suit, and "8" is the value of the card.
+       * will return a card instance that has the same suit and value. Note:
+       * The filename be in a standard format and must not have a folder listed
+       * before it. The first two characters must be like "A8", where "A" is
+       * the suit, and "8" is the value of the card.
        */
       char suitChar = filename.charAt(1);
       char valueChar = filename.charAt(0);
       Model.Card tempCard = new Model.Card();
       switch (suitChar)
       {
-         case 'C': tempCard.suit = Card.Suit.clubs;
-            break; 
-         case 'D': tempCard.suit = Card.Suit.diamonds;
-            break;
-         case 'H': tempCard.suit = Card.Suit.hearts;
-            break;
-         case 'S': tempCard.suit = Card.Suit.spades;
-            break;
-         default: tempCard.suit = Card.Suit.spades;
-            break;
+      case 'C':
+         tempCard.suit = Card.Suit.clubs;
+         break;
+      case 'D':
+         tempCard.suit = Card.Suit.diamonds;
+         break;
+      case 'H':
+         tempCard.suit = Card.Suit.hearts;
+         break;
+      case 'S':
+         tempCard.suit = Card.Suit.spades;
+         break;
+      default:
+         tempCard.suit = Card.Suit.spades;
+         break;
       }
       tempCard.value = valueChar;
       return tempCard;
    }
-   
+
    public static class Deck
    {
 
@@ -1254,9 +1291,9 @@ class Model
 
    public static class Card
    {
-      //private static final char DEFAULT_VALUE = 'A';
-      //private static final Suit DEFAULT_SUIT = Suit.spades;
-            
+      // private static final char DEFAULT_VALUE = 'A';
+      // private static final Suit DEFAULT_SUIT = Suit.spades;
+
       public enum Suit
       {
          clubs, diamonds, hearts, spades;
@@ -1425,111 +1462,110 @@ class Model
          }
          return -1; // fail
       }
-      
+
       /*
        * ValueAsInt, SuitAsInt, arraySort added for general logic.
+       * 
        * @Nick
        */
       public static int valueAsInt(Card card)
       {
-        char testValue = card.getValue();
-          switch ((char)testValue)
-          {
-              case 'A':
-                  return 0;
-              case '2':
-                  return 1;
-              case '3':
-                  return 2;
-              case '4':
-                  return 3;
-              case '5':
-                  return 4;
-              case '6':
-                  return 5;
-              case '7':
-                  return 6;
-              case '8':
-                  return 7;
-              case '9':
-                  return 8;
-              case 'T':
-                  return 9;
-              case 'J':
-                  return 10;
-              case 'Q':
-                  return 11;
-              case 'K':
-                  return 12;
-              default:
-                  return 13;
-          }
-      
+         char testValue = card.getValue();
+         switch ((char) testValue)
+         {
+         case 'A':
+            return 0;
+         case '2':
+            return 1;
+         case '3':
+            return 2;
+         case '4':
+            return 3;
+         case '5':
+            return 4;
+         case '6':
+            return 5;
+         case '7':
+            return 6;
+         case '8':
+            return 7;
+         case '9':
+            return 8;
+         case 'T':
+            return 9;
+         case 'J':
+            return 10;
+         case 'Q':
+            return 11;
+         case 'K':
+            return 12;
+         default:
+            return 13;
+         }
+
       }
-      
-      public static int suitAsInt( Card card)
-      {  
-          // handles nullPointerExepction when card becomes invalid
-          if(card.getSuit() != null) 
-          {
-             switch( card.getSuit() )
-             {
-                case clubs:
-                   return 0;
-                case diamonds:
-                   return 1;
-                case hearts:
-                   return 2;
-                default:
-                   return 3;
-             }
-          }
-          else
-             return 0;
-           
+
+      public static int suitAsInt(Card card)
+      {
+         // handles nullPointerExepction when card becomes invalid
+         if (card.getSuit() != null)
+         {
+            switch (card.getSuit())
+            {
+            case clubs:
+               return 0;
+            case diamonds:
+               return 1;
+            case hearts:
+               return 2;
+            default:
+               return 3;
+            }
+         } else
+            return 0;
+
       }
-      
-      public static void arraySort( Card[] cards, int arraySize )
+
+      public static void arraySort(Card[] cards, int arraySize)
       {
          boolean changed = true;
-         
-         while( changed )
+
+         while (changed)
          {
             changed = false;
-            
-            for( int i = 0; i < arraySize; i++ )
+
+            for (int i = 0; i < arraySize; i++)
             {
-               if( suitAsInt(cards[i]) > suitAsInt(cards[i + 1]) )
+               if (suitAsInt(cards[i]) > suitAsInt(cards[i + 1]))
                {
-                  swapCards( cards, i, i + 1 );
+                  swapCards(cards, i, i + 1);
                   changed = true;
-               }
-               else if( suitAsInt(cards[i]) == suitAsInt(cards[i + 1]) )
+               } else if (suitAsInt(cards[i]) == suitAsInt(cards[i + 1]))
                {
-                  if( valueAsInt(cards[i]) > valueAsInt(cards[i + 1]) )
+                  if (valueAsInt(cards[i]) > valueAsInt(cards[i + 1]))
                   {
-                     swapCards( cards, i, i + 1 );
+                     swapCards(cards, i, i + 1);
                      changed = true;
                   }
                }
             }
-         }  
+         }
       }
-      
-      public static void swapCards( Card[] array, int card1, int card2 )
+
+      public static void swapCards(Card[] array, int card1, int card2)
       {
          Card temp;
-         
+
          temp = array[card1];
          array[card1] = array[card2];
          array[card2] = temp;
       }
-  }
-      
+   }
+
    public static class CardGameFramework
    {
       private static final int MAX_PLAYERS = 50;
-   
+
       private int numPlayers;
       private int numPacks; // # standard 52-card packs per deck
                             // ignoring jokers or unused cards
@@ -1542,13 +1578,13 @@ class Model
       private Card[] unusedCardsPerPack; // an array holding the cards not used
                                          // in the game. e.g. pinochle does not
                                          // use cards 2-8 of any suit
-   
+
       public CardGameFramework(int numPacks, int numJokersPerPack,
-            int numUnusedCardsPerPack, Card[] unusedCardsPerPack,
-            int numPlayers, int numCardsPerHand)
+                     int numUnusedCardsPerPack, Card[] unusedCardsPerPack,
+                     int numPlayers, int numCardsPerHand)
       {
          int k;
-         
+
          // filter bad values
          if (numPacks < 1)
          {
@@ -1558,27 +1594,34 @@ class Model
             numPacks = 6;
          }
          if (numJokersPerPack < 0 || numJokersPerPack > 4)
+         {
             numJokersPerPack = 0;
-         if (numUnusedCardsPerPack < 0 || numUnusedCardsPerPack > 50) // > 1
-                                                                      // card
+         }
+         if (numUnusedCardsPerPack < 0 || numUnusedCardsPerPack > 50)
+         {
             numUnusedCardsPerPack = 0;
+         }
          if (numPlayers < 1 || numPlayers > MAX_PLAYERS)
+         {
             numPlayers = 4;
+         }
          // one of many ways to assure at least one full deal to all players
          if (numCardsPerHand < 1 || numCardsPerHand > (numPacks
-               * (52 - numUnusedCardsPerPack) / numPlayers))
+                        * (52 - numUnusedCardsPerPack) / numPlayers))
          {
             numCardsPerHand = numPacks * (52 - numUnusedCardsPerPack)
-                  / numPlayers;
+                           / numPlayers;
          }
-   
+
          // allocate
          this.unusedCardsPerPack = new Card[numUnusedCardsPerPack];
          this.hand = new Hand[numPlayers];
          for (k = 0; k < numPlayers; k++)
+         {
             this.hand[k] = new Hand();
+         }
          deck = new Deck(numPacks);
-   
+
          // assign to members
          this.numPacks = numPacks;
          this.numJokersPerPack = numJokersPerPack;
@@ -1586,73 +1629,83 @@ class Model
          this.numPlayers = numPlayers;
          this.numCardsPerHand = numCardsPerHand;
          for (k = 0; k < numUnusedCardsPerPack; k++)
+         {
             this.unusedCardsPerPack[k] = unusedCardsPerPack[k];
-   
+         }
+
          // prepare deck and shuffle
-            newGame();
+         newGame();
       }
-   
+
       // constructor overload/default for game like bridge
       public CardGameFramework()
       {
          this(1, 0, 0, null, 4, 13);
       }
-   
+
       public Hand getHand(int k)
       {
          // hands start from 0 like arrays
-   
+
          // on error return automatic empty hand
          if (k < 0 || k >= numPlayers)
             return new Hand();
-   
+
          return hand[k];
       }
-   
+
       public Card getCardFromDeck()
       {
          return deck.dealCard();
       }
-   
+
       public int getNumCardsRemainingInDeck()
       {
          return deck.getNumCards();
       }
-   
+
       public void newGame()
       {
          int k, j;
-   
+
          // clear the hands
          for (k = 0; k < numPlayers; k++)
-         hand[k].resetHand();
-   
+         {
+            hand[k].resetHand();
+         }
+
          // restock the deck
          deck.init(numPacks);
-   
+
          // remove unused cards
          for (k = 0; k < numUnusedCardsPerPack; k++)
+         {
             deck.removeCard(unusedCardsPerPack[k]);
-   
+         }
+
          // add jokers
          for (k = 0; k < numPacks; k++)
+         {
             for (j = 0; j < numJokersPerPack; j++)
+            {
                deck.addCard(new Card('X', Card.Suit.values()[j]));
-   
+            }
+         }
+
          // shuffle the cards
          deck.shuffle();
-         }
-   
+      }
+
       public boolean deal()
       {
          // returns false if not enough cards, but deals what it can
          int k, j;
          boolean enoughCards;
-   
+
          // clear all hands
          for (j = 0; j < numPlayers; j++)
             hand[j].resetHand();
-   
+
          enoughCards = true;
          for (k = 0; k < numCardsPerHand && enoughCards; k++)
          {
@@ -1665,43 +1718,45 @@ class Model
                   break;
                }
          }
-   
+
          return enoughCards;
       }
-   
+
       public void sortHands()
       {
          int k;
-   
+
          for (k = 0; k < numPlayers; k++)
+         {
             hand[k].sort();
+         }
       }
-   
+
       public Card playCard(int playerIndex, int cardIndex)
       {
          // returns bad card if either argument is bad
          if (playerIndex < 0 || playerIndex > numPlayers - 1 || cardIndex < 0
-               || cardIndex > numCardsPerHand - 1)
+                        || cardIndex > numCardsPerHand - 1)
          {
             // Creates a card that does not work
             return new Card('M', Card.Suit.spades);
          }
-   
+
          // return the card played
          return hand[playerIndex].playCard(cardIndex);
-   
+
       }
-   
+
       public boolean takeCard(int playerIndex)
       {
          // returns false if either argument is bad
          if (playerIndex < 0 || playerIndex > numPlayers - 1)
             return false;
-         
+
          // Are there enough Cards?
          if (deck.getNumCards() <= 0)
             return false;
-   
+
          return hand[playerIndex].takeCard(deck.dealCard());
       }
    }
@@ -1711,30 +1766,30 @@ class Model
       public static final int MAX_CARDS_PER_HAND = 56;
       public static final int MAX_PLAYERS = 2; // for now, we only allow 2
                                                // person games
-   
+
       private int numCardsPerHand;
       private int numPlayers;
-   
+
       /*
        * The constructor filters and sets input
        */
       public CardTableModel(String title, int numCardsPerHand, int numPlayers)
       {
-         //super(title);
-         
+         // super(title);
+
          if (numCardsPerHand <= MAX_CARDS_PER_HAND)
             this.numCardsPerHand = numCardsPerHand;
-   
+
          if (numPlayers <= MAX_PLAYERS)
             this.numPlayers = numPlayers;
-       }
-   
+      }
+
       // Accessors for the two instance members
       public int getNumCardsPerHand()
       {
          return this.numCardsPerHand;
       }
-   
+
       public int getNumPlayers()
       {
          return this.numPlayers;
@@ -1742,4 +1797,3 @@ class Model
    }
 
 }
-
