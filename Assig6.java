@@ -11,6 +11,7 @@
  *  */
 
 import java.awt.BorderLayout;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -32,7 +33,7 @@ public class Assig6
       Control.setUpGame();
       // The computer and player hands will be built up from BUILD hands
       Control.buildHands();
-      // TODO: set up 2 Piles (use pile class to keep track)
+      // TODO: set up 2 Piles (use CardPile class to keep track)
       // Gathers information on players and sets up labels for View
       Control.setUpPlayerLabels();
       // Call helper method to put the playLabelText onto the myCardTable
@@ -156,42 +157,42 @@ class Control
       BUILD.deal();
 
       View.drawNewCardTable(NUM_CARDS_PER_HAND, NUM_PLAYERS);
-
    }
 
    /**
-    * For both computer and player, add the chosen cards (stored in
+    * For both computer and player, add the card (stored in
     * playedCardLabels) to the myCardTable middle JPanel
     */
    public static void addCardToTable(int playerIndex)
    {
+      if (View.myCardTable.pnlPlayArea.getComponentCount() > 2)
+      {
+         // Remove the card in the play area if one is there.
+         View.myCardTable.pnlPlayArea.remove(2);
+      }
       View.myCardTable.pnlPlayArea.add(playedCardLabels[playerIndex]);
       View.myCardTable.repaint();
    }
 
    /**
     * Generate the choice of card (from the computer's hand) for the computer
-    * based off of the value of the card in the hand. The computer will always
-    * choose the highest value of card in the hand.
+    * based off of the value of the card in the hand.
     */
-   public static void selectComputerCard()
+   public static boolean selectComputerCard()
    {
       Model.Hand computerHand = BUILD.getHand(0);
       for (int i = 0; i < computerHand.getNumCards(); i++)
       {
-         // TODO: use pile class (either here or at selectComputerCard method
-         // call)
-         int cardValue = Model.Card.valueAsInt(computerHand.inspectCard(i));
-         // if card > or < pile A by 1 play
-         // get new card
-         // else if card > or < pile B by 1 play
-         // get new card
-         // break
+         Model.Card tempCard = computerHand.inspectCard(i);
+         if (Model.CardPile.addCardToPile(tempCard) == true)
+         {
+            playedCardLabels[0] = new JLabel(Model.GUICard.getIcon(
+                  computerHand.inspectCard(i)));
+            removePlayedCardFromHand(0, tempCard);
+            return true;
+         }
       }
-
-      // possibly use later
-      // playedCardLabels[0] = new
-      // JLabel(Model.GUICard.getIcon(computerHand.inspectCard(highestValueIndex)));
+      return false; // If there are no cards for the computer to play
    }
 
    /**
@@ -225,14 +226,13 @@ class Control
    {
       // find the index of the card in the hand, then remove it via playCard()
       // needs to remove from one player at a time
-      Model.Card tempCard = Model.getCardFromPlayer(playerIndex);
-      int cardInHandIndex = getIndexOfCardInHand(playerIndex, tempCard);
+      //Model.Card tempCard = Model.getCardFromPlayer(playerIndex);
+      int cardInHandIndex = getIndexOfCardInHand(playerIndex, card);
       BUILD.getHand(playerIndex).playCard(cardInHandIndex);
 
       buildHands();
 
       View.updateView();
-
    }
 
    /**
@@ -279,43 +279,39 @@ class Control
     */
 
    /**
-    * @Mitchell
+    * Timer class is intended to be used as a JLabel. Once it has been
+    * called the caller can create a button from a public method that will
+    * be able to stop and start the timer. Otherwise the timer can be
+    * started by passing true to it in a constructor. Timer will not be able
+    * to display any time past 99 minutes and 59 seconds.
     */
    @SuppressWarnings("serial")
    public static class Timer extends JLabel implements ActionListener
    {
-      /**
-       * Timer class is intended to be used as a JLabel. Once it has been
-       * called the caller can create a button from a public method that will
-       * be able to stop and start the timer. Otherwise the timer can be
-       * started by passing true to it in a constructor. Timer will not be able
-       * to display any time past 99 minutes and 59 seconds.
-       */
-      String timerText;
-      long startTime;
-      JButton timerButton = new JButton();
-      Counter counterThread = new Counter();
+      private JButton timerButton = new JButton();
+      private Counter counterThread = new Counter();
 
       // this will represent control in the MVC
       // this needs to be removed before implementing
 
+      /**
+       * Default constructor for Timer class that assigns an action listener
+       * sets text alignment, and original timer value.
+       */
       public Timer()
       {
-         /**
-          * Default constructor for Timer class that assigns an action listener
-          * sets text alignment, and original timer value.
-          */
          timerButton.addActionListener(this);
          this.setHorizontalAlignment(SwingConstants.CENTER);
          setText("00:00");
+         setFont(new Font("Serif", Font.BOLD, 20));
       }
 
+      /**
+       * Another constructor that allows the caller to create and start the
+       * time immediately.
+       */
       public Timer(boolean startTimerNow)
       {
-         /**
-          * Another constructor that allows the caller to create and start the
-          * time immediately.
-          */
          this(); // call default constructor
          if (startTimerNow)
          {
@@ -324,33 +320,33 @@ class Control
 
       }
 
-      public JButton getButtonToStartTimer()
+      /**
+       * Returns a JButton that is associated with the action listener and
+       * will start and stop the timer.
+       */
+      public JButton getButtonToToggleTimer()
       {
-         /**
-          * Returns a JButton that is associated with the action listener and
-          * will start and stop the timer.
-          */
          return timerButton;
       }
 
+      /**
+       * Reset timer to zero seconds for any reason.
+       */
       public boolean resetTimer()
       {
-         /**
-          * Reset timer to zero seconds for any reason.
-          */
          this.counterThread.setSeconds(0);
          return true;
       }
 
+      /**
+       * Action listener for the instance JButton that will start and stop
+       * the timer. If the thread is alive, then stop the existing thread
+       * and create a new thread with the same time value, but stopped. If
+       * the thread is not alive, then start the thread.
+       */
       @Override
       public void actionPerformed(ActionEvent e)
       {
-         /**
-          * Action listener for the instance JButton that will start and stop
-          * the timer. If the thread is alive, then stop the existing thread
-          * and create a new thread with the same time value, but stopped. If
-          * the thread is not alive, then start the thread.
-          */
          if (counterThread.isAlive())
          {
             counterThread.stopThread();
@@ -361,44 +357,44 @@ class Control
          }
       }
 
+      /**
+       * Counter class is the mutlti-threaded portion of the timer and is
+       * what is responsible for making the Timer class not lock up the gui.
+       */
       public class Counter extends Thread
       {
-         /**
-          * Counter class is the mutlti-threaded portion of the timer and is
-          * what is responsible for making the Timer class not lock up the gui.
-          */
          private int seconds = 0;
          private boolean threadRunning = true;
 
+         /**
+          * Default constructor that calls the constructor of the Thread
+          * class
+          */
          public Counter()
          {
-            /**
-             * Default constructor that calls the constructor of the Thread
-             * class
-             */
             super();
          }
 
+         /**
+          * Another constructor that allows the caller to initialize the
+          * thread with a start time. This is what gives the illusion of a
+          * paused timer.
+          */
          public Counter(int timeStartValue)
          {
-            /**
-             * Another constructor that allows the caller to initialize the
-             * thread with a start time. This is what gives the illusion of a
-             * paused timer.
-             */
             // Subtract 1 from the timeStartValue to prevent the timer
             // incrementing
             // from every pause/start.
             this.seconds = timeStartValue - 1;
          }
 
+         /**
+          * Called when the instance's method start() is called (inherited
+          * from Thread class). This is where the updating of the timer
+          * takes place.
+          */
          public void run()
          {
-            /**
-             * Called when the instance's method start() is called (inherited
-             * from Thread class). This is where the updating of the timer
-             * takes place.
-             */
             while (threadRunning)
             {
                /*
@@ -419,41 +415,41 @@ class Control
             }
          }
 
+         /**
+          * Allow caller to set seconds of the timer. Added to allow Timer
+          * class to reset timer to zero.
+          */
          public boolean setSeconds(int seconds)
          {
-            /**
-             * Allow caller to set seconds of the timer. Added to allow Timer
-             * class to reset timer to zero.
-             */
             this.seconds = seconds;
             return true;
          }
 
+         /**
+          * This method will terminate the loop driving the run() method.
+          */
          public boolean stopThread()
          {
-            /**
-             * This method will terminate the loop driving the run() method.
-             */
             this.threadRunning = false;
             return true;
          }
 
+         /**
+          * Return the number of seconds passed since timer has started.
+          */
          public int getSecondsPassed()
          {
-            /**
-             * Return the number of seconds passed since timer has started.
-             */
             return this.seconds;
          }
 
+         /**
+          * Format and return a String that can be used to set the Timer's
+          * JLabel text. The format of the timer is "MM:ss" where "M"
+          * represents the minutes and "s" represents the seconds passed
+          * since timer start.
+          */
          private String getFormattedTime(int totalElapsedSeconds)
          {
-            /**
-             * Format and return a String that can be used to set the Timer's
-             * JLabel text. The format of the timer is "MM:ss" where "M"
-             * represents the minutes and "s" represents the seconds passed
-             * since timer start.
-             */
             int minutes = totalElapsedSeconds / 60;
             int seconds = totalElapsedSeconds - (minutes * 60);
             String timerText = String.format("%02d", minutes) + ":"
@@ -461,12 +457,12 @@ class Control
             return timerText;
          }
 
+         /**
+          * This method will allow the thread to sleep for a number of
+          * milliseconds and is crucial for keeping time.
+          */
          private void doNothing(long milliseconds)
          {
-            /**
-             * This method will allow the thread to sleep for a number of
-             * milliseconds and is crucial for keeping time.
-             */
             try
             {
                Thread.sleep(milliseconds);
@@ -479,6 +475,62 @@ class Control
       }
    }
 
+   @SuppressWarnings("serial")
+   public static class CannotPlayButton extends JButton 
+                                                   implements ActionListener
+   {
+      private static int computerIndex = 0;
+      
+      public CannotPlayButton()
+      {
+         super();
+         setText("Cannot Play");
+         setFont(new Font("Serif", Font.PLAIN, 12));
+         addActionListener(this);
+      }
+
+      @Override
+      public void actionPerformed(ActionEvent arg0)
+      {
+         Model.Card tempCard = new Model.Card();
+         // If the computer has a valid move, then add that card to the 
+         // playerCardLabels. Otherwise, increment computer's cannot play
+         // counter, and deal card from deck.
+         if (selectComputerCard() == true)
+         {
+            addCardToTable(computerIndex);
+            tempCard = Model.getCardFromPlayer(computerIndex);
+            Control.BUILD.takeCard(computerIndex);
+         }
+         else
+         {
+            // TODO: increment computer's cannot play counter
+            tempCard = Control.BUILD.getCardFromDeck();
+         }
+         Model.CardPile.addCardtoPileWithoutCheck(tempCard);
+         Model.readyToPlayCard = false;
+      }
+   }
+   
+   @SuppressWarnings("serial")
+   public static class AdvanceButton extends JButton implements ActionListener
+   {
+      public AdvanceButton()
+      {
+         super();
+         setText("Advance to next round");
+         setFont(new Font("Serif", Font.PLAIN, 12));
+         addActionListener(this);
+      }
+
+      @Override
+      public void actionPerformed(ActionEvent arg0)
+      {
+         Model.readyToPlayCard = true;
+         //roundEndDisplay();
+      }
+   }
+   
    @SuppressWarnings("serial")
    public static class CardButton extends JButton implements ActionListener
    {
@@ -499,25 +551,37 @@ class Control
             // create JLabel from the JButton clicked and add to
             // playedCardLabels
             JButton source = (JButton) e.getSource();
-            playedCardLabels[humanIndex] = new JLabel(source.getIcon());
-            // TODO: use Pile class to check whether card is good
-            addCardToTable(humanIndex);
-            // Choose computer card based off of computer hand
-            selectComputerCard(); // TODO: use Pile class to check whether card
-                                  // is good
-            // add all selections to main play area
-            addCardToTable(computerIndex);
-            // display winner message and button to advance
-            // roundEndDisplay();
-            // add both cards to winnings if user won
-            Model.buttonLogic();
-            // remove chosen cards out of computer an player's hands
-            // removePlayedCardFromHand(0); // TODO: add which player, and card
-            // played
-            updateView();
-            // now that a card has just been played, change the flag so that
-            // subsequent button presses do nothing
-            Model.readyToPlayCard = false;
+            Model.Card humanCard = Model.getCardFromFilename(
+                                                   source.getIcon().toString());
+            
+            // If the player made a valid selection, then proceed
+            if (Model.CardPile.addCardToPile(humanCard) == true)
+            {
+               removePlayedCardFromHand(1, humanCard);
+               playedCardLabels[humanIndex] = new JLabel(source.getIcon());
+               // TODO: use Pile class to check whether card is good
+               addCardToTable(humanIndex);
+               // Choose computer card based off of computer hand
+               if (selectComputerCard() == true)
+               {
+                  addCardToTable(computerIndex);
+                  Control.BUILD.takeCard(computerIndex);
+               }                              
+               else
+               {
+                  //TODO: increment the counter of "Cannot play" for computer
+               } 
+               //TODO: display winner message and button to advance
+               // roundEndDisplay();
+               Model.buttonLogic(); //What is this for exactly?
+               
+               //take card from deck for human player
+               Control.BUILD.takeCard(humanIndex);
+
+               // now that a card has just been played, change the flag so that
+               // subsequent button presses do nothing
+               Model.readyToPlayCard = false;
+            }
          }
       }
    }
@@ -580,7 +644,6 @@ class View
       myCardTable.setLocationRelativeTo(null);
       myCardTable.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
       myCardTable.setVisible(true);
-
    }
 
    @SuppressWarnings("serial")
@@ -633,7 +696,7 @@ class View
          pnlCenterArea = new JPanel(new GridLayout(2, 1));
          pnlPlayArea = new JPanel(new GridLayout(2, 2));
          pnlMsgArea = new JPanel();
-         pnlTimerArea = new JPanel(new GridLayout(1, 1));
+         pnlTimerArea = new JPanel();
 
          setLayout(new BorderLayout(10, 10));
 
@@ -645,12 +708,18 @@ class View
           * Added the timer in here with its start/stop button
           */
          Control.Timer autoTimer = new Control.Timer(true);
-         JButton timerStartButton = autoTimer.getButtonToStartTimer();
-         timerStartButton.setText("Start/Stop Timer");
+         JButton timerToggleButton = autoTimer.getButtonToToggleTimer();
+         timerToggleButton.setText("Start/Stop Timer");
+         
+         Control.CannotPlayButton cannotPlayButton = new 
+                                                   Control.CannotPlayButton();
+         Control.AdvanceButton advanceButton = new Control.AdvanceButton();
 
-         pnlTimerArea.add(timerStartButton);
+         pnlTimerArea.add(timerToggleButton);
          pnlTimerArea.add(autoTimer);
-
+         pnlTimerArea.add(cannotPlayButton);
+         pnlTimerArea.add(advanceButton);
+         
          pnlCenterArea.add(pnlPlayArea);
          pnlCenterArea.add(pnlMsgArea);
 
@@ -707,6 +776,14 @@ class Model
       return "get win message method";
    }
 
+   
+   //possibly remove the following two methods getCardFromPlayer if it isn't
+   //used --------------------------------------------------------------------
+   //-------------------------------------------------------------------------
+   //-------------------------------------------------------------------------
+   //-------------------------------------------------------------------------
+   //-------------------------------------------------------------------------
+   //-------------------------------------------------------------------------
    /**
     * When provided a player number (0 for computer, 1 or more for player) this
     * will return the card that the entity had most recently chosen to play.
@@ -730,10 +807,11 @@ class Model
     * it. The first two characters must be like "A8", where "A" is the suit,
     * and "8" is the value of the card.
     */
-   private static Card getCardFromFilename(String filename)
+   public static Card getCardFromFilename(String filename)
    {
-      char suitChar = filename.charAt(1);
-      char valueChar = filename.charAt(0);
+      String cardString = filename.substring(filename.indexOf('/') + 1);
+      char suitChar = cardString.charAt(1);
+      char valueChar = cardString.charAt(0);
       Model.Card tempCard = new Model.Card();
       switch (suitChar)
       {
@@ -759,18 +837,59 @@ class Model
 
    public static class CardPile
    {
-      private Card topCard;
-
-      public boolean addCardToPile(Card card)
+      /**
+       * CardPile class will hold just the top card of the pile in the center
+       * of the play area. Cards can only be added by the player or the computer
+       * when the card value is 1 greater or smaller than the top card
+       * displayed. In the instance that neither can play, another method has
+       * been provided that will allow a card to be placed regardless of its
+       * value (this is supposed to be done only from the deck and not a
+       * player).
+       */
+      private static Card topCard;
+      
+      public static Card getTopCard()
       {
-         if (Card.valueAsInt(topCard) - 1 == Card.valueAsInt(card)
-                        || Card.valueAsInt(topCard) + 1 == Card
-                                       .valueAsInt(card))
+         /**
+          * This is an accessor for the topCard, and it will supply the caller
+          * with a card of equal value to use.
+          */
+         return new Card(topCard.value, topCard.suit);
+      }
+
+      public static boolean addCardToPile(Card card)
+      {
+         /**
+          * If the card is one greater or smaller than the top card, make it
+          * the top card.
+          */
+         if (topCard == null)
          {
             topCard = card;
             return true;
          }
-         return false; // not allowed
+         else
+         {
+            if (Card.valueAsInt(topCard) - 1 == Card.valueAsInt(card) ||
+                  Card.valueAsInt(topCard) + 1 == Card.valueAsInt(card))
+            {
+               topCard = card;
+               return true;
+            }
+         }         
+         // will occur when player selects card that is not valid
+         return false;  
+      }
+      
+      public static boolean addCardtoPileWithoutCheck(Card card)
+      {
+         /**
+          * When neither the computer or player can add a card to the pile
+          * the deck, this can be called and set the top card (specifically from
+          * the deck).
+          */
+         topCard = card;
+         return true;
       }
 
    }
